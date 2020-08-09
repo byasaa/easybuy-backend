@@ -24,12 +24,12 @@ module.exports = {
       sort == 'oldest' ? query.product.get = `${baseQuery} ` + `ORDER BY id ASC ` + pagination
         : sort == 'popular' ? query.product.get = `${baseQuery} ` + `ORDER BY products.rating DESC ` + pagination
           : sort == 'featured' ? query.product.get = `${baseQuery} ` + `ORDER BY RAND() ` + pagination
-            : search ? query.product.get = `${baseQuery} ` + `WHERE products.name LIKE '%${search}%' ORDER BY id DESC ` + pagination
+            : search ? query.product.get = `${baseQuery} ` + `WHERE products.name LIKE '%${search}%' ` + `ORDER BY id DESC ` + pagination
               : price == 'highest' ? query.product.get = `${baseQuery} ` + `ORDER BY products.price DESC ` + pagination
                 : price == 'lowest' ? query.product.get = `${baseQuery} ` + `ORDER BY products.price ASC ` + pagination
-                  : size ? query.product.get = `${baseQuery} ` + `WHERE products.size = ${size} ORDER BY id DESC ` + pagination
-                    : color ? query.product.get = `${baseQuery} ` + `WHERE products.color = ${color} ORDER BY id DESC ` + pagination
-                      : category ? query.product.get = `${baseQuery} ` + `WHERE products.category_id = ${category} ORDER BY id DESC ` + pagination
+                  : size ? query.product.get = `${baseQuery} ` + `WHERE products.size = ${size} ` + `ORDER BY id DESC ` + pagination
+                    : color ? query.product.get = `${baseQuery} ` + `WHERE products.color = ${color} ` + `ORDER BY id DESC ` + pagination
+                      : category ? query.product.get = `${baseQuery} ` + `WHERE products.category_id = ${category} ` + `ORDER BY id DESC ` + pagination
                         : query.product.get = `${baseQuery} ` + `ORDER BY id DESC ` + pagination
 
       const result = await productModel.getLatestProductModel();
