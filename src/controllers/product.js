@@ -6,7 +6,7 @@ const query = require('../helpers/query');
 module.exports = {
   getLatestProduct: async (req, res) => {
     try {
-      let { sort, page, search } = req.query
+      let { sort, page, search, price, size, color, category } = req.query
 
       const limit = "2"
       const offset = `${page * limit - limit}`
@@ -15,17 +15,22 @@ module.exports = {
 
       // Ternary operator for query params
       // -----------------------------------
-      // Display oldest product
-      // Display popular product
-      // Display featured product
-      // Display latest product
+      // Oldest product
+      // Popular product
+      // Featured product
+      // Search product
+      // Latest product
 
       sort == 'oldest' ? query.product.get = `${baseQuery} ` + `ORDER BY id ASC ` + pagination
         : sort == 'popular' ? query.product.get = `${baseQuery} ` + `ORDER BY products.rating DESC ` + pagination
           : sort == 'featured' ? query.product.get = `${baseQuery} ` + `ORDER BY RAND() ` + pagination
-            : search ? query.product.get = `${baseQuery} ` + `WHERE products.name LIKE '%${search}%' ORDER BY id DESC ` + pagination
-              : query.product.get = `${baseQuery} ` + `ORDER BY id DESC ` + pagination
-
+            : search ? query.product.get = `${baseQuery} ` + `WHERE products.name LIKE '%${search}%' ` + `ORDER BY id DESC ` + pagination
+              : price == 'highest' ? query.product.get = `${baseQuery} ` + `ORDER BY products.price DESC ` + pagination
+                : price == 'lowest' ? query.product.get = `${baseQuery} ` + `ORDER BY products.price ASC ` + pagination
+                  : size ? query.product.get = `${baseQuery} ` + `WHERE products.size = ${size} ` + `ORDER BY id DESC ` + pagination
+                    : color ? query.product.get = `${baseQuery} ` + `WHERE products.color = ${color} ` + `ORDER BY id DESC ` + pagination
+                      : category ? query.product.get = `${baseQuery} ` + `WHERE products.category_id = ${category} ` + `ORDER BY id DESC ` + pagination
+                        : query.product.get = `${baseQuery} ` + `ORDER BY id DESC ` + pagination
 
       const result = await productModel.getLatestProductModel();
       return helper.response(res, 'success', result, 200);
@@ -36,7 +41,7 @@ module.exports = {
   },
   getSingleProduct: async (req, res) => {
     try {
-      const id = req.params.id
+      const { id } = req.params
       const result = await productModel.getSingleProduct(id);
       return helper.response(res, 'success', result, 200);
     } catch (err) {
