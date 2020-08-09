@@ -1,4 +1,4 @@
-const {response} = require('../helpers')
+const {response} = require('../helpers/response')
 const {register, insertOtp, loginByEmail, getOtp, activingUser} = require('../models/auth')
 const {
     genSaltSync,
@@ -46,6 +46,7 @@ module.exports = {
             if (otp[0].code == setData.code) {
                 if (otp[0].expired_at > new Date()) {
                     const result = await activingUser(setData.email)
+                    // TO DO delete otp in database
                     return response(res, 'success', result, 200)
                 } else {
                     return response(res, 'Failed', 'OTP is Expired', 500)

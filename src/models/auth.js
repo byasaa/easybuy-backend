@@ -1,9 +1,10 @@
 const connection = require('../helpers/mysql')
+const {auth} = require('../helpers/query')
 
 module.exports = {
     register: (setData) => {
         return new Promise((resolve, reject) => {
-            connection.query("INSERT INTO users SET ?", setData, (error, result) => {
+            connection.query(auth.register, setData, (error, result) => {
                 if (error) {
                     reject(error)
                 }
@@ -18,7 +19,7 @@ module.exports = {
     },
     insertOtp: (setData) => {
         return new Promise((resolve, reject) => {
-            connection.query("INSERT INTO otp SET ?", setData, (error, result) => {
+            connection.query(auth.inserOtp, setData, (error, result) => {
                 if (error) {
                     reject(error)
                 }
@@ -28,7 +29,7 @@ module.exports = {
     },
     getOtp: (setData) => {
         return new Promise((resolve, reject) => {
-            connection.query("SELECT * FROM otp WHERE email = ? ORDER BY created_at DESC LIMIT 1", setData.email, (error, result) => {
+            connection.query(auth.getOtp, setData.email, (error, result) => {
                 if (error) {
                     reject(error)
                 }
@@ -38,7 +39,7 @@ module.exports = {
     },
     loginByEmail: (email) => {
         return new Promise((resolve, reject) => {
-            connection.query("SELECT * FROM users WHERE email = ?", email, (error, result) => {
+            connection.query(auth.loginByEmail, email, (error, result) => {
                 if (error) {
                     reject(error)
                 }
@@ -48,7 +49,7 @@ module.exports = {
     },
     activingUser: (email) => {
         return new Promise((resolve, reject) => {
-            connection.query("UPDATE users SET is_active = 1 WHERE email = ?", email, (error, result) => {
+            connection.query(auth.activingUser, email, (error, result) => {
                 if (error) {
                     reject(error)
                 }
