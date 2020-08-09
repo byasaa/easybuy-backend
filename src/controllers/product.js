@@ -6,20 +6,19 @@ const query = require('../helpers/query');
 module.exports = {
   getLatestProduct: async (req, res) => {
     try {
-      let { sort } = req.query
-      let { page } = req.query
-
+      let { sort, page } = req.query
 
       const limit = "2"
       const offset = `${page * limit - limit}`
       const pagination = `LIMIT ${limit} OFFSET ${offset}`
-      const baseQuery = `SELECT products.id, products.name, brands.name as brand, categories.name as category, products.description, products.price, products.color, products.size, products.rating, products.created_at, products.updated_at FROM products INNER JOIN brands ON products.brand_id = brands.id INNER JOIN categories ON products.category_id = categories.id`
+      const baseQuery = `SELECT products.id, products.name, brands.name as brand, categories.name as category, products.description, products.image, products.price, products.color, products.size, products.rating, products.created_at, products.updated_at FROM products INNER JOIN brands ON products.brand_id = brands.id INNER JOIN categories ON products.category_id = categories.id`
 
       // Ternary operator for query params
       // -----------------------------------
       // Display oldest product
-      // Display latest product
       // Display popular product
+      // Display featured product
+      // Display latest product
 
       sort == 'oldest' ? query.product.get = `${baseQuery} ORDER BY id ASC ` + pagination
         : sort == 'popular' ? query.product.get = `${baseQuery} ORDER BY products.rating DESC ` + pagination
@@ -38,10 +37,10 @@ module.exports = {
     try {
       const id = req.params.id
       const result = await productModel.getSingleProduct(id);
-      return helper.response(res, 'succress', result, 200);
+      return helper.response(res, 'success', result, 200);
     } catch (err) {
       console.log(err);
-      return helper.response(res, 'failed', 'Something Error, 500')
+      return helper.response(res, 'failed', 'Something Error', 500)
     }
   }
 }
