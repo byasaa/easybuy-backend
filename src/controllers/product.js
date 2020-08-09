@@ -1,10 +1,30 @@
 // Min logic for Author route
 const helper = require('../helpers/response');
 const productModel = require('../models/product');
+const query = require('../helpers/query');
 
 module.exports = {
   getLatestProduct: async (req, res) => {
     try {
+      let { sort } = req.query
+      let { page } = req.query
+
+
+      const limit = "2"
+      const offset = `${page * 2 - 2}`
+      const baseQuery = `SELECT products.id, products.name, brands.name as brand, categories.name as category, products.description, products.price, products.color, products.size, products.rating, products.created_at, products.updated_at FROM products INNER JOIN brands ON products.brand_id = brands.id INNER JOIN categories ON products.category_id = categories.id`
+
+      // Ternary operator for query params
+      // -----------------------------------
+      // Display oldest product
+      // Display latest product
+      // Display popular product
+
+      sort == 'oldest' ? query.product.get = `${baseQuery} ORDER BY id ASC LIMIT ${limit} OFFSET ${offset}`
+        : sort == 'popular' ? query.product.get = `${baseQuery} ORDER BY products.rating DESC LIMIT ${limit} OFFSET ${offset}`
+          : query.product.get = `${baseQuery} ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+
+
       const result = await productModel.getLatestProductModel();
       return helper.response(res, 'success', result, 200);
     } catch (err) {
