@@ -10,5 +10,9 @@ module.exports = {
     inserOtp: "INSERT INTO otp SET ?",
     getOtp: "SELECT * FROM otp WHERE email = ? ORDER BY created_at DESC LIMIT 1",
     activingUser: "UPDATE users SET is_active = 1 WHERE email = ?"
-  }
+  },
+  profile: {
+    editProfile: "UPDATE users SET ? WHERE id = ?",
+    getProfileById: "SELECT id, name, email, image FROM users WHERE id = ?",
+  },
 }
