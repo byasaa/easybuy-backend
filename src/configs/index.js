@@ -6,7 +6,11 @@ const config = {
         database : process.env.DB_NAME
     },
     secretKey: process.env.JWT_SECRET,
-    refreshKey: process.env.JWT_SECRET_REFRESH
+    refreshKey: process.env.JWT_SECRET_REFRESH,
+    email: {
+        user: process.env.EMAIL,
+        pass: process.env.PASS,
+    }
 }
 
 module.exports = config

@@ -1,7 +1,11 @@
 const express = require('express')
 const router = express.Router()
+const {register, login, activation, token} = require('../../controllers/auth')
 
 router
-    .get('/test', (req, res) => res.send('Test'))
+    .post('/register', register)
+    .post('/login', login)
+    .post('/token', token)
+    .post('/activation', activation)
 
 module.exports = router;
