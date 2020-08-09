@@ -6,7 +6,7 @@ const query = require('../helpers/query');
 module.exports = {
   getLatestProduct: async (req, res) => {
     try {
-      let { sort, page } = req.query
+      let { sort, page, search } = req.query
 
       const limit = "2"
       const offset = `${page * limit - limit}`
@@ -20,10 +20,11 @@ module.exports = {
       // Display featured product
       // Display latest product
 
-      sort == 'oldest' ? query.product.get = `${baseQuery} ORDER BY id ASC ` + pagination
-        : sort == 'popular' ? query.product.get = `${baseQuery} ORDER BY products.rating DESC ` + pagination
-          : sort == 'featured' ? query.product.get = `${baseQuery} ORDER BY RAND() ` + pagination
-            : query.product.get = `${baseQuery} ORDER BY id DESC ` + pagination
+      sort == 'oldest' ? query.product.get = `${baseQuery} ` + `ORDER BY id ASC ` + pagination
+        : sort == 'popular' ? query.product.get = `${baseQuery} ` + `ORDER BY products.rating DESC ` + pagination
+          : sort == 'featured' ? query.product.get = `${baseQuery} ` + `ORDER BY RAND() ` + pagination
+            : search ? query.product.get = `${baseQuery} ` + `WHERE products.name LIKE '%${search}%' ORDER BY id DESC ` + pagination
+              : query.product.get = `${baseQuery} ` + `ORDER BY id DESC ` + pagination
 
 
       const result = await productModel.getLatestProductModel();
