@@ -6,7 +6,7 @@ const query = require('../helpers/query');
 module.exports = {
   getLatestProduct: async (req, res) => {
     try {
-      let { sort, page, search, price, size } = req.query
+      let { sort, page, search, price, size, color } = req.query
 
       const limit = "2"
       const offset = `${page * limit - limit}`
@@ -28,7 +28,8 @@ module.exports = {
               : price == 'highest' ? query.product.get = `${baseQuery} ` + `ORDER BY products.price DESC ` + pagination
                 : price == 'lowest' ? query.product.get = `${baseQuery} ` + `ORDER BY products.price ASC ` + pagination
                   : size ? query.product.get = `${baseQuery} ` + `WHERE products.size = ${size} ORDER BY id DESC ` + pagination
-                    : query.product.get = `${baseQuery} ` + `ORDER BY id DESC ` + pagination
+                    : color ? query.product.get = `${baseQuery} ` + `WHERE products.color = ${color} ORDER BY id DESC ` + pagination
+                      : query.product.get = `${baseQuery} ` + `ORDER BY id DESC ` + pagination
 
       const result = await productModel.getLatestProductModel();
       return helper.response(res, 'success', result, 200);
@@ -39,7 +40,7 @@ module.exports = {
   },
   getSingleProduct: async (req, res) => {
     try {
-      const id = req.params.id
+      const { id } = req.params
       const result = await productModel.getSingleProduct(id);
       return helper.response(res, 'success', result, 200);
     } catch (err) {
