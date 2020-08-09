@@ -11,7 +11,8 @@ module.exports = {
 
 
       const limit = "2"
-      const offset = `${page * 2 - 2}`
+      const offset = `${page * limit - limit}`
+      const pagination = `LIMIT ${limit} OFFSET ${offset}`
       const baseQuery = `SELECT products.id, products.name, brands.name as brand, categories.name as category, products.description, products.price, products.color, products.size, products.rating, products.created_at, products.updated_at FROM products INNER JOIN brands ON products.brand_id = brands.id INNER JOIN categories ON products.category_id = categories.id`
 
       // Ternary operator for query params
@@ -20,9 +21,10 @@ module.exports = {
       // Display latest product
       // Display popular product
 
-      sort == 'oldest' ? query.product.get = `${baseQuery} ORDER BY id ASC LIMIT ${limit} OFFSET ${offset}`
-        : sort == 'popular' ? query.product.get = `${baseQuery} ORDER BY products.rating DESC LIMIT ${limit} OFFSET ${offset}`
-          : query.product.get = `${baseQuery} ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+      sort == 'oldest' ? query.product.get = `${baseQuery} ORDER BY id ASC ` + pagination
+        : sort == 'popular' ? query.product.get = `${baseQuery} ORDER BY products.rating DESC ` + pagination
+          : sort == 'featured' ? query.product.get = `${baseQuery} ORDER BY RAND() ` + pagination
+            : query.product.get = `${baseQuery} ORDER BY id DESC ` + pagination
 
 
       const result = await productModel.getLatestProductModel();
