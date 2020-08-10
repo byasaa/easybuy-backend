@@ -4,7 +4,6 @@ const productController = require('../controllers/product');
 const redis = require('../middlewares/redis')
 
 router.get('/', productController.getLatestProduct);
-// router.get('/:id', productController.getSingleProduct);
 router.get('/:id', redis.cacheProductDetail, productController.getSingleProduct);
 
 module.exports = router;
