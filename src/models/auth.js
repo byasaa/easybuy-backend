@@ -23,13 +23,27 @@ module.exports = {
                 if (error) {
                     reject(error)
                 }
-                resolve(result)
+                const newData = {
+                    id: result.insertId,
+                    ...setData
+                }
+                resolve(newData)
             })
         })
     },
     getOtp: (setData) => {
         return new Promise((resolve, reject) => {
             connection.query(auth.getOtp, setData.email, (error, result) => {
+                if (error) {
+                    reject(error)
+                }
+                resolve(result)
+            })
+        })
+    },
+    deleteOtp: (email) => {
+        return new Promise((resolve, reject) => {
+            connection.query(auth.deleteOtp, email, (error, result) => {
                 if (error) {
                     reject(error)
                 }
@@ -56,6 +70,20 @@ module.exports = {
                 const newData = {
                     email: email
                 }
+                resolve(newData)
+            })
+        })
+    },
+    resetPassword : (setData) => {
+        return new Promise((resolve, reject) => {
+            connection.query(auth.resetPassword, [setData, setData.email], (error, result) => {
+                if (error) {
+                    reject(error)
+                }
+                const newData = {
+                    ...setData
+                }
+                delete newData.password
                 resolve(newData)
             })
         })

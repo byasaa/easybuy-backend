@@ -1,5 +1,5 @@
 const {response} = require('../helpers/response')
-const {register, insertOtp, loginByEmail, getOtp, activingUser} = require('../models/auth')
+const {register, insertOtp, loginByEmail, getOtp, deleteOtp, activingUser, resetPassword} = require('../models/auth')
 const {
     genSaltSync,
     hashSync,
@@ -46,7 +46,9 @@ module.exports = {
             if (otp[0].code == setData.code) {
                 if (otp[0].expired_at > new Date()) {
                     const result = await activingUser(setData.email)
-                    // TO DO delete otp in database
+                    if(result){
+                        await deleteOtp(setData.email)
+                    }
                     return response(res, 'success', result, 200)
                 } else {
                     return response(res, 'Failed', 'OTP is Expired', 500)
@@ -54,7 +56,7 @@ module.exports = {
             }
             return response(res, 'Failed', 'OTP code not same', 500)
         } catch (error) {
-            
+            return response(res, 'Failed', 'Internal Server Error', 500)
         }
     },
     login: async (req, res) => {
@@ -99,9 +101,57 @@ module.exports = {
             return response(res, 'fail', 'Internal server Error', 500)
         }
     },
-    // forgotPassword: {
-
-    // },
+    forgotPassword: async (req, res) => {
+        let otpCode = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets: false });
+        const now = new Date()
+        setOtp = {
+            email: req.body.email,
+            code: otpCode,
+            expired_at: new Date(now.setMinutes(now.getMinutes() + 30)),
+        }
+        try {
+            await sendOtp(setOtp)
+            const result = await insertOtp(setOtp)
+            return response(res, 'success', result, 201)
+        } catch (error) {
+            console.log(error)
+            return response(res, 'fail', 'Internal server Error', 500)
+        }
+    },
+    resetPassword : async (req, res) => {
+        const setData = req.body
+        const salt = genSaltSync(10)
+        setData.password = hashSync(setData.password, salt)
+        setData.updated_at = new Date()
+        try {
+            const result = await resetPassword(setData)
+            return response(res, 'success', result, 200)
+        } catch (error) {
+            console.log(error)
+            return response(res, 'fail', 'Something Wrong I can Feel it', 500)
+        } 
+    },
+    checkOtp : async (req, res) => {
+        const setData = {
+            email: req.body.email,
+            code: req.body.code,
+        }
+        try {
+            const otp = await getOtp(setData)
+            if (otp[0].code == setData.code) {
+                if (otp[0].expired_at > new Date()) {
+                    await deleteOtp(setData.email)
+                    return response(res, 'success', true, 200)
+                } else {
+                    return response(res, 'Failed', 'OTP is Expired', 500)
+                }
+            }
+            return response(res, 'Failed', 'OTP code not same', 500)
+        } catch (error) {
+            console.log(error);
+            return response(res, 'Failed', 'Internal Server Error', 500)
+        }
+    },
     token: (req, res) => {
         try {
             const refreshToken = req.body.token
