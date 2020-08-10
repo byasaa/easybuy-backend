@@ -1,4 +1,4 @@
-const {response} = require('../helpers/response')
+const { response } = require('../helpers/response')
 const { editProfile, getProfileById } = require('../models/profile')
 
 module.exports = {

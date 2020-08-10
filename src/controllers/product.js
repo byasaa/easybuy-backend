@@ -2,9 +2,7 @@
 const helper = require('../helpers/response');
 const productModel = require('../models/product');
 const query = require('../helpers/query');
-const redis = require('redis');
-const REDIS_PORT = 6379;
-const client = redis.createClient(REDIS_PORT);
+const redis = require('../middlewares/redis');
 
 module.exports = {
   getLatestProduct: async (req, res) => {
@@ -51,7 +49,8 @@ module.exports = {
       delete obj.created_at
       delete obj.updated_at
       console.log("Hello from main controller")
-      client.hmset('product' + id, obj);
+      const name = 'product';
+      redis.caching(name, id, obj)
       return helper.response(res, 'success', obj, 200);
     } catch (err) {
       console.log(err);
