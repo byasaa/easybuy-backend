@@ -15,4 +15,10 @@ module.exports = {
     editProfile: "UPDATE users SET ? WHERE id = ?",
     getProfileById: "SELECT id, name, email, image FROM users WHERE id = ?",
   },
+  address: {
+    addNewAddress: "INSERT INTO address SET ?",
+    editAddress: "UPDATE address SET ? WHERE id = ?",
+    getAddressByUserId: "SELECT address.id, users.name, address.address, address.created_at, address.updated_at FROM address INNER JOIN users ON address.user_id = users.id WHERE user_id = ?",
+    deleteAddress: "",
+  }
 }
