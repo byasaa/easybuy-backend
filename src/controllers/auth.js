@@ -1,5 +1,5 @@
 const {response} = require('../helpers/response')
-const {register, insertOtp, loginByEmail, getOtp, deleteOtp, activingUser, resetPassword} = require('../models/auth')
+const {register, insertOtp, loginByEmail, getOtp, deleteOtp, activingUser, resetPassword, changePassword} = require('../models/auth')
 const {
     genSaltSync,
     hashSync,
@@ -118,6 +118,28 @@ module.exports = {
             return response(res, 'fail', 'Internal server Error', 500)
         }
     },
+    changePassword: async (req, res) => {
+        const email = req.decodedToken.user.email
+        const oldPassword = req.body.oldPassword
+        let newPassword = req.body.newPassword
+        try {
+            const result = await loginByEmail(email)
+            if(result[0]){
+                const checkPass = compareSync(oldPassword, result[0].password)
+                if(checkPass){
+                    const salt = genSaltSync(10)
+                    newPassword = hashSync(newPassword, salt)
+                    await changePassword(newPassword, email)
+                    response(res, 'success', 'Change Password Success', 200)
+                }
+            return response(res, 'fail', 'Password is Invalid', 404)
+            }
+            return response(res, 'fail', 'Email is Not Available', 404)
+        } catch (error) {
+            console.log(error);
+            return response(res, 'fail', 'Internal Server Error', 500)
+        }
+    },
     resetPassword : async (req, res) => {
         const setData = req.body
         const salt = genSaltSync(10)
@@ -133,7 +155,7 @@ module.exports = {
     },
     checkOtp : async (req, res) => {
         const setData = {
-            email: req.body.email,
+            email: req.decodedToken.user.email,
             code: req.body.code,
         }
         try {

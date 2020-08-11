@@ -60,7 +60,6 @@ module.exports = {
     },
     checkOtpValidator : (req, res, next) => {
         const validationRule = {
-            "email": "required|email",
             "code": "required|numeric",
         }
         validator(req.body, validationRule, {}, (err, status) => {
@@ -89,6 +88,20 @@ module.exports = {
         const validationRule = {
             "email": "required|email",
             "password": "required|string|min:6",
+        }
+        validator(req.body, validationRule, {}, (err, status) => {
+            if(!status) {
+                return response(res, 'fail', err, 412)
+            } else {
+                console.log(status)
+                next()
+            }
+        })
+    },
+    changeValidator : (req, res, next) => {
+        const validationRule = {
+            "oldPassword": "required",
+            "newPassword": "required|string|min:6",
         }
         validator(req.body, validationRule, {}, (err, status) => {
             if(!status) {

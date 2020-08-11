@@ -11,7 +11,8 @@ module.exports = {
     getOtp: "SELECT * FROM otp WHERE email = ? ORDER BY created_at DESC LIMIT 1",
     activingUser: "UPDATE users SET is_active = 1 WHERE email = ?",
     deleteOtp: "DELETE FROM otp WHERE email = ?",
-    resetPassword: "UPDATE users SET ? WHERE email = ?"
+    resetPassword: "UPDATE users SET ? WHERE email = ?",
+    changePassword: "UPDATE users SET password = ? WHERE email = ?"
   },
   profile: {
     editProfile: "UPDATE users SET ? WHERE id = ?",
