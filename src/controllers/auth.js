@@ -1,5 +1,5 @@
 const {response} = require('../helpers/response')
-const {register, insertOtp, loginByEmail, getOtp, deleteOtp, activingUser, resetPassword} = require('../models/auth')
+const {register, insertOtp, loginByEmail, getOtp, deleteOtp, activingUser, resetPassword, changePassword} = require('../models/auth')
 const {
     genSaltSync,
     hashSync,
@@ -13,12 +13,12 @@ const {sendOtp} = require('../helpers/nodemailer');
 
 module.exports = {
     register: async (req, res) => {
-        let otpCode = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets: false });
-        const setData = req.body
-        const salt = genSaltSync(10)
-        setData.password = hashSync(setData.password, salt)
-        setData.is_active = 0
         try {
+            let otpCode = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets: false });
+            const setData = req.body
+            const salt = genSaltSync(10)
+            setData.password = hashSync(setData.password, salt)
+            setData.is_active = 0
             const result = await register(setData)
             const now = new Date()
 
@@ -37,11 +37,11 @@ module.exports = {
         }
     },
     activation: async (req, res) => {
-        const setData = {
-            email: req.body.email,
-            code: req.body.code,
-        }
         try {
+            const setData = {
+                email: req.body.email,
+                code: req.body.code,
+            }
             const otp = await getOtp(setData)
             if (otp[0].code == setData.code) {
                 if (otp[0].expired_at > new Date()) {
@@ -60,9 +60,9 @@ module.exports = {
         }
     },
     login: async (req, res) => {
-        const email = req.body.email
-        const password = req.body.password
         try {
+            const email = req.body.email
+            const password = req.body.password
             const result = await loginByEmail(email)
             if(result[0].is_active == 1) {
                 const user = result[0]
@@ -102,28 +102,51 @@ module.exports = {
         }
     },
     forgotPassword: async (req, res) => {
-        let otpCode = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets: false });
-        const now = new Date()
-        setOtp = {
-            email: req.body.email,
-            code: otpCode,
-            expired_at: new Date(now.setMinutes(now.getMinutes() + 30)),
-        }
         try {
+            let otpCode = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets: false });
+            const now = new Date()
+            setOtp = {
+                email: req.body.email,
+                code: otpCode,
+                expired_at: new Date(now.setMinutes(now.getMinutes() + 30)),
+            }
             await sendOtp(setOtp)
             const result = await insertOtp(setOtp)
+            delete result.code
             return response(res, 'success', result, 201)
         } catch (error) {
             console.log(error)
             return response(res, 'fail', 'Internal server Error', 500)
         }
     },
-    resetPassword : async (req, res) => {
-        const setData = req.body
-        const salt = genSaltSync(10)
-        setData.password = hashSync(setData.password, salt)
-        setData.updated_at = new Date()
+    changePassword: async (req, res) => {
         try {
+            const email = req.decodedToken.user.email
+            const oldPassword = req.body.oldPassword
+            let newPassword = req.body.newPassword
+            const result = await loginByEmail(email)
+            if(result[0]){
+                const checkPass = compareSync(oldPassword, result[0].password)
+                if(checkPass){
+                    const salt = genSaltSync(10)
+                    newPassword = hashSync(newPassword, salt)
+                    await changePassword(newPassword, email)
+                    response(res, 'success', 'Change Password Success', 200)
+                }
+            return response(res, 'fail', 'Password is Invalid', 404)
+            }
+            return response(res, 'fail', 'Email is Not Available', 404)
+        } catch (error) {
+            console.log(error);
+            return response(res, 'fail', 'Internal Server Error', 500)
+        }
+    },
+    resetPassword : async (req, res) => {
+        try {
+            const setData = req.body
+            const salt = genSaltSync(10)
+            setData.password = hashSync(setData.password, salt)
+            setData.updated_at = new Date()
             const result = await resetPassword(setData)
             return response(res, 'success', result, 200)
         } catch (error) {
@@ -132,11 +155,11 @@ module.exports = {
         } 
     },
     checkOtp : async (req, res) => {
-        const setData = {
-            email: req.body.email,
-            code: req.body.code,
-        }
         try {
+            const setData = {
+                email: req.body.email,
+                code: req.body.code,
+            }
             const otp = await getOtp(setData)
             if (otp[0].code == setData.code) {
                 if (otp[0].expired_at > new Date()) {

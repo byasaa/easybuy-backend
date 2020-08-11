@@ -1,7 +1,7 @@
-const express = require('express');
+const express = require('express')
 const router = express.Router()
-const { editProfile, getProfileById } = require('../controllers/profile');
-const { upload } = require('../middlewares/multer');
+const { editProfile, getProfileById } = require('../controllers/profile')
+const { upload } = require('../helpers/multer')
 
 router
     .get('/:id', getProfileById)

@@ -74,6 +74,19 @@ module.exports = {
             })
         })
     },
+    changePassword: (newPassword, email) => {
+        return new Promise((resolve, reject) => {
+            connection.query(auth.changePassword, [newPassword, email], (error, result) => {
+                if (error) {
+                    reject(error)
+                }
+                const newData = {
+                    email: email
+                }
+                resolve(newData)
+            })
+        })
+    },
     resetPassword : (setData) => {
         return new Promise((resolve, reject) => {
             connection.query(auth.resetPassword, [setData, setData.email], (error, result) => {
