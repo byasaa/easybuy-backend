@@ -4,7 +4,12 @@ const {response} = require('../helpers/response')
 module.exports = {
     address : (req, res, next) => {
         const validationRule = {
+            "address_as": "required|string",
+            "fullname": "required|string",
             "address": "required|string",
+            "city": "required|string",
+            "zip_code": "required|numeric",
+            "telp": "required|string",
         }
         validator(req.body, validationRule, {}, (err, status) => {
             if(!status) {
