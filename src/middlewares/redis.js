@@ -22,5 +22,6 @@ module.exports = {
   },
   deleteCache: (key) => {
     client.del(key);
+    // Delete cache jika terjadi perubahan data, agar redis bisa mengambil data terbaru
   }
 }
