@@ -45,6 +45,7 @@ module.exports = {
         const validationRule = {
             "email": "required|email",
             "name": "required|string",
+            "birthday": "required",
             "password": "required|string|min:6",
         }
         validator(req.body, validationRule, {}, (err, status) => {
@@ -73,7 +74,7 @@ module.exports = {
     activationValidator : (req, res, next) => {
         const validationRule = {
             "email": "required|email",
-            "code": "required|min:6|max:6|numeric",
+            "code": "required|numeric",
         }
         validator(req.body, validationRule, {}, (err, status) => {
             if(!status) {
