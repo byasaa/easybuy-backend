@@ -1,6 +1,6 @@
 // Database processing for Product
 const connection = require('../helpers/mysql');
-const {product} = require('../helpers/query');
+const { product } = require('../helpers/query');
 
 module.exports = {
   getProductModel: (search, color, size, category, order, limit, page) => {
@@ -20,43 +20,43 @@ module.exports = {
   },
   editProduct: (setData, id) => {
     return new Promise((resolve, reject) => {
-        connection.query(product.editProduct, [setData, id], (error, result) => {
-            if (error) {
-                reject(error)
-            }
-            const newData = {
-                ...setData
-            }
-            resolve(newData)
+      connection.query(product.editProduct, [setData, id], (error, result) => {
+        if (error) {
+          reject(error)
+        }
+        const newData = {
+          ...setData
+        }
+        resolve(newData)
       })
     })
   },
   insertProduct: (setData, id) => {
     return new Promise((resolve, reject) => {
-        connection.query(product.insertProduct, setData, (error, result) => {
-            if (error) {
-                reject(error)
-            }
-            const newData = {
-                id: result.insertId,
-                ...setData
-            }
-            resolve(newData)
+      connection.query(product.insertProduct, setData, (error, result) => {
+        if (error) {
+          reject(error)
+        }
+        const newData = {
+          id: result.insertId,
+          ...setData
+        }
+        resolve(newData)
       })
     })
   },
   deleteProduct: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(product.deleteProduct, id, (error, result) => {
-          if (error) {
-              reject(error)
-          }
-          const newData = {
-              id
-          }
-          resolve(newData)
-        })
+        if (error) {
+          reject(error)
+        }
+        const newData = {
+          id
+        }
+        resolve(newData)
       })
+    })
   },
   getSingleProduct: (id) => {
     return new Promise((resolve, reject) => {

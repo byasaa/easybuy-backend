@@ -1,60 +1,90 @@
-// Min logic for Author route
-const helper = require('../helpers/response');
-const productModel = require('../models/product');
-const query = require('../helpers/query');
+const { response } = require('../helpers/response')
+const { editProduct, deleteProduct, insertProduct, getProductModel, getSingleProduct } = require('../models/product')
 const redis = require('../middlewares/redis');
 
 module.exports = {
-  getLatestProduct: async (req, res) => {
-    try {
-      let { sort, page, search, price, size, color, category } = req.query
-
-      const limit = "2"
-      const offset = `${page * limit - limit}`
-      const pagination = `LIMIT ${limit} OFFSET ${offset}`
-      const baseQuery = `SELECT products.id, products.name, brands.name as brand, categories.name as category, products.description, products.image, products.price, products.color, products.size, products.rating, products.created_at, products.updated_at FROM products INNER JOIN brands ON products.brand_id = brands.id INNER JOIN categories ON products.category_id = categories.id`
-
-      // Ternary operator for query params
-      // -----------------------------------
-      // Oldest product
-      // Popular product
-      // Featured product
-      // Search product
-      // Latest product
-
-      sort == 'oldest' ? query.product.get = `${baseQuery} ` + `ORDER BY id ASC ` + pagination
-        : sort == 'popular' ? query.product.get = `${baseQuery} ` + `ORDER BY products.rating DESC ` + pagination
-          : sort == 'featured' ? query.product.get = `${baseQuery} ` + `ORDER BY RAND() ` + pagination
-            : search ? query.product.get = `${baseQuery} ` + `WHERE products.name LIKE '%${search}%' ` + `ORDER BY id DESC ` + pagination
-              : price == 'highest' ? query.product.get = `${baseQuery} ` + `ORDER BY products.price DESC ` + pagination
-                : price == 'lowest' ? query.product.get = `${baseQuery} ` + `ORDER BY products.price ASC ` + pagination
-                  : size ? query.product.get = `${baseQuery} ` + `WHERE products.size = ${size} ` + `ORDER BY id DESC ` + pagination
-                    : color ? query.product.get = `${baseQuery} ` + `WHERE products.color = ${color} ` + `ORDER BY id DESC ` + pagination
-                      : category ? query.product.get = `${baseQuery} ` + `WHERE products.category_id = ${category} ` + `ORDER BY id DESC ` + pagination
-                        : query.product.get = `${baseQuery} ` + `ORDER BY id DESC ` + pagination
-
-      const result = await productModel.getLatestProductModel();
-      return helper.response(res, 'success', result, 200);
-    } catch (err) {
-      console.log(err);
-      return helper.response(res, 'failed', 'Something Error', 500);
+    getProduct: async (req, res) => {
+        let { sort, search, color, size, category, limit, page } = req.query
+        let order = sort == 'oldest' ? 'created_at ASC'
+            : sort == 'newest' ? 'created_at DESC'
+                : sort == 'popular' ? 'rating DESC'
+                    : sort == 'price-low' ? 'price ASC'
+                        : sort == 'price-high' ? 'price DESC'
+                            : 'created_at DESC'
+        search = search || ''
+        color = color || ''
+        size = size || ''
+        category = category || ''
+        limit = limit || 10
+        page = page || 1
+        try {
+            const result = await getProductModel(search, color, size, category, order, limit, page)
+            if (result[0]) {
+                return response(res, 'success', result, 200)
+            }
+            return response(res, 'fail', 'Product Null', 404)
+        } catch (error) {
+            console.log(error)
+            return response(res, 'fail', 'Something Wrong I can Feel it', 500)
+        }
+    },
+    addProduct: async (req, res) => {
+        const setData = {
+            ...req.body
+        }
+        if (req.file) {
+            setData.image = req.file.filename
+        }
+        try {
+            const result = await insertProduct(setData)
+            return response(res, 'success', result, 201)
+        } catch (error) {
+            console.log(error)
+            return response(res, 'fail', 'Something Wrong I can Feel it', 500)
+        }
+    },
+    editProduct: async (req, res) => {
+        const setData = {
+            ...req.body
+        }
+        if (req.file) {
+            setData.image = req.file.filename
+        }
+        const id = req.params.id
+        setData.updated_at = new Date()
+        try {
+            const result = await editProduct(setData, id)
+            return response(res, 'success', result, 200)
+        } catch (error) {
+            console.log(error)
+            return response(res, 'fail', 'Something Wrong I can Feel it', 500)
+        }
+    },
+    deleteProduct: async (req, res) => {
+        const id = req.params.id
+        try {
+            const result = await deleteProduct(id)
+            return response(res, 'success', result, 200)
+        } catch (error) {
+            console.log(error)
+            return response(res, 'fail', 'Something Wrong I can Feel it', 500)
+        }
+    },
+    getSingleProduct: async (req, res) => {
+        try {
+            const { id } = req.params
+            const result = await getSingleProduct(id);
+            const entries = Object.entries(result[0]);
+            const obj = Object.fromEntries(entries);
+            delete obj.created_at
+            delete obj.updated_at
+            console.log("Hello from main controller")
+            const name = 'product';
+            redis.caching(name, id, obj)
+            return response(res, 'success', obj, 200);
+        } catch (err) {
+            console.log(err);
+            return response(res, 'failed', 'Something Error', 500)
+        }
     }
-  },
-  getSingleProduct: async (req, res) => {
-    try {
-      const { id } = req.params
-      const result = await productModel.getSingleProduct(id);
-      const entries = Object.entries(result[0]);
-      const obj = Object.fromEntries(entries);
-      delete obj.created_at
-      delete obj.updated_at
-      console.log("Hello from main controller")
-      const name = 'product';
-      redis.caching(name, id, obj)
-      return helper.response(res, 'success', obj, 200);
-    } catch (err) {
-      console.log(err);
-      return helper.response(res, 'failed', 'Something Error', 500)
-    }
-  }
 }
