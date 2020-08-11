@@ -20,6 +20,27 @@ module.exports = {
             }
         })
     },
+    product : (req, res, next) => {
+        console.log(req.body);
+        const validationRule = {
+            "name": "required|string",
+            "brand_id": "required",
+            "category_id": "required",
+            "description": "required|string",
+            "price": "required",
+            "color": "required",
+            "size": "required",
+            "rating": "required",
+        }
+        validator(req.body, validationRule, {}, (err, status) => {
+            if(!status) {
+                return response(res, 'fail', err, 412)
+            } else {
+                console.log(status)
+                next()
+            }
+        })
+    },
     registrationValidator : (req, res, next) => {
         const validationRule = {
             "email": "required|email",

@@ -2,7 +2,7 @@
 const helper = require('../helpers/response');
 const productModel = require('../models/product');
 const query = require('../helpers/query');
-const redis = require('../middlewares/redis');
+// const redis = require('../middlewares/redis');x
 
 module.exports = {
   getLatestProduct: async (req, res) => {
@@ -50,7 +50,7 @@ module.exports = {
       delete obj.updated_at
       console.log("Hello from main controller")
       const name = 'product';
-      redis.caching(name, id, obj)
+      // redis.caching(name, id, obj)
       return helper.response(res, 'success', obj, 200);
     } catch (err) {
       console.log(err);
