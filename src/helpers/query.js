@@ -28,10 +28,16 @@ module.exports = {
     deleteAddress: "",
   },
   cart: {
-    getMyCartList: "SELECT cart.id, products.name, products.image, cart.selected_color as color, cart.selected_size as color, cart.qty, cart.created_at, cart.updated_at FROM cart INNER JOIN products ON cart.product_id = products.id WHERE cart.user_id = ?",
+    getMyCartList: "SELECT cart.id, cart.product_id, products.name, products.image, cart.selected_color as color, cart.selected_size as size, cart.qty, cart.total, cart.created_at, cart.updated_at FROM cart INNER JOIN products ON cart.product_id = products.id WHERE cart.user_id = ?",
     addItemToCart: "INSERT INTO cart SET ?",
     editItemCart: "UPDATE cart SET ? WHERE id = ?",
     deleteItemFromCart: "DELETE FROM cart WHERE id = ?",
-    deleteCartAfterSbmit: "DELETE FROM cart WHERE user_id = ?"
+  },
+  order: {
+    getMyOrder: "SELECT id, tracking_number, qty, amount, status, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC",
+    getOrderDetail: "SELECT order_detail.id, products.name, order_detail.selected_color as color, order_detail.selected_size AS size, order_detail.qty, order_detail.total, orders.address_id, order_detail.order_id, orders.tracking_number, orders.status, orders.created_at FROM order_detail INNER JOIN orders ON order_detail.order_id = orders.id INNER JOIN products ON order_detail.product_id = products.id INNER JOIN address ON orders.address_id = address.id WHERE order_id = ?",
+    deleteCartAfterSbmit: "DELETE FROM cart WHERE user_id = ?",
+    createOrder: "INSERT INTO orders SET ?",
+    moveCartToOrder: "INSERT INTO order_detail (order_id, product_id, selected_color, selected_size, qty, total) VALUES ?"
   }
 }
