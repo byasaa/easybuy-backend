@@ -48,6 +48,7 @@ module.exports = {
                 expired_at: new Date(now.setMinutes(now.getMinutes() + 30)),
             }
             await insertOtp(setOtp)
+            setOtp.subject = 'Active Your Account'
             await sendOtp(setOtp)
 
             return response(res, 'success', result, 201)
@@ -119,6 +120,7 @@ module.exports = {
                         expired_at: new Date(now.setMinutes(now.getMinutes() + 30)),
                     }
                     await insertOtp(setOtp)
+                    setOtp.subject = 'Active Your Account'
                     await sendOtp(setOtp)
                     return response(res, 'fail', 'Please Active Your Email', 504)
                 }
@@ -143,8 +145,9 @@ module.exports = {
                 code: otpCode,
                 expired_at: new Date(now.setMinutes(now.getMinutes() + 30)),
             }
-            await sendOtp(setOtp)
             const result = await insertOtp(setOtp)
+            setOtp.subject = 'Reset Your Password Account'
+            await sendOtp(setOtp)
             delete result.code
             return response(res, 'success', result, 201)
         } catch (error) {
