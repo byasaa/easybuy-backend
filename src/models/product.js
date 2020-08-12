@@ -1,6 +1,8 @@
 // Database processing for Product
 const connection = require('../helpers/mysql');
-const { product } = require('../helpers/query');
+const {
+  product
+} = require('../helpers/query');
 
 module.exports = {
   getProductModel: (search, color, size, category, order, limit, page) => {
