@@ -39,19 +39,24 @@ module.exports = {
             const salt = genSaltSync(10)
             setData.password = hashSync(setData.password, salt)
             setData.is_active = 0
-            const result = await register(setData)
-            const now = new Date()
+            const checkEmail = await loginByEmail(setData.email)
+            if (checkEmail[0]) {
+                return response(res, 'Failed', 'email is already registered, try using another email', 504)
+            } else {
+                const result = await register(setData)
+                const now = new Date()
 
-            setOtp = {
-                email: result.email,
-                code: otpCode,
-                expired_at: new Date(now.setMinutes(now.getMinutes() + 30)),
+                setOtp = {
+                    email: result.email,
+                    code: otpCode,
+                    expired_at: new Date(now.setMinutes(now.getMinutes() + 30)),
+                }
+                await insertOtp(setOtp)
+                setOtp.subject = 'Active Your Account'
+                await sendOtp(setOtp)
+
+                return response(res, 'success', result, 201)
             }
-            await insertOtp(setOtp)
-            setOtp.subject = 'Active Your Account'
-            await sendOtp(setOtp)
-
-            return response(res, 'success', result, 201)
         } catch (error) {
             console.log(error)
             return response(res, 'Failed', 'Internal server Error', 500)
