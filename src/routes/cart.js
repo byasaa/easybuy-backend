@@ -13,7 +13,7 @@ const {} = require('../middlewares/validation');
 
 router
     .get('/', verifyToken, getMyCartList)
-    .post('/', verifyToken, addItemCart)
+    .post('/:product_id', verifyToken, addItemCart)
     .put('/:id', verifyToken, editItemCart)
     .delete('/:id', verifyToken, deleteItemCart)
 

@@ -41,6 +41,16 @@ module.exports = {
             })
         })
     },
+    getSingleCartItem: (id) => {
+        return new Promise((resolve, reject) => {
+            connection.query(cart.getSingleCartItem, id, (error, result) => {
+                if (error) {
+                    reject(error)
+                }
+                resolve(result)
+            })
+        })
+    },
     deleteCartAfterSubmit: (id) => {
         return new Promise((resolve, reject) => {
             connection.query(cart.deleteCartAfterSbmit, id, (error, result) => {

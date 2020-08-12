@@ -29,6 +29,7 @@ module.exports = {
   },
   cart: {
     getMyCartList: "SELECT cart.id, cart.product_id, products.name, products.image, cart.selected_color as color, cart.selected_size as size, cart.qty, cart.total, cart.created_at, cart.updated_at FROM cart INNER JOIN products ON cart.product_id = products.id WHERE cart.user_id = ?",
+    getSingleCartItem: "SELECT * FROM cart WHERE id = ?",
     addItemToCart: "INSERT INTO cart SET ?",
     editItemCart: "UPDATE cart SET ? WHERE id = ?",
     deleteItemFromCart: "DELETE FROM cart WHERE id = ?",
