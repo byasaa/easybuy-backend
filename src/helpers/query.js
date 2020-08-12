@@ -26,5 +26,12 @@ module.exports = {
     editAddress: "UPDATE address SET ? WHERE id = ?",
     getAddressByUserId: "SELECT address.id, users.name, address.address, address.created_at, address.updated_at FROM address INNER JOIN users ON address.user_id = users.id WHERE user_id = ?",
     deleteAddress: "",
+  },
+  cart: {
+    getMyCartList: "SELECT cart.id, products.name, products.image, cart.selected_color as color, cart.selected_size as color, cart.qty, cart.created_at, cart.updated_at FROM cart INNER JOIN products ON cart.product_id = products.id WHERE cart.user_id = ?",
+    addItemToCart: "INSERT INTO cart SET ?",
+    editItemCart: "UPDATE cart SET ? WHERE id = ?",
+    deleteItemFromCart: "DELETE FROM cart WHERE id = ?",
+    deleteCartAfterSbmit: "DELETE FROM cart WHERE user_id = ?"
   }
 }

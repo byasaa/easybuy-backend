@@ -1,5 +1,7 @@
 const connection = require('../helpers/mysql')
-const {auth} = require('../helpers/query')
+const {
+    auth
+} = require('../helpers/query')
 
 module.exports = {
     register: (setData) => {
@@ -87,7 +89,7 @@ module.exports = {
             })
         })
     },
-    resetPassword : (setData) => {
+    resetPassword: (setData) => {
         return new Promise((resolve, reject) => {
             connection.query(auth.resetPassword, [setData, setData.email], (error, result) => {
                 if (error) {

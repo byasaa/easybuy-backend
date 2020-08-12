@@ -9,7 +9,7 @@ router
     .get('/', getProduct)
     .get('/:id', redis.cacheProductDetail, getSingleProduct)
     .post('/', upload.single('image'), product, addProduct)
-    .put('/:id', editProduct)
+    .put('/:id', upload.single('image'), editProduct)
     .delete('/:id', deleteProduct)
 
 module.exports = router;
