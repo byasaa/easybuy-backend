@@ -23,10 +23,10 @@ module.exports = {
         } = req.query
         let order = sort == 'oldest' ? 'created_at ASC' :
             sort == 'newest' ? 'created_at DESC' :
-            sort == 'popular' ? 'rating DESC' :
-            sort == 'price-low' ? 'price ASC' :
-            sort == 'price-high' ? 'price DESC' :
-            'created_at DESC'
+                sort == 'popular' ? 'rating DESC' :
+                    sort == 'price-low' ? 'price ASC' :
+                        sort == 'price-high' ? 'price DESC' :
+                            'created_at DESC'
         search = search || ''
         color = color || ''
         size = size || ''
@@ -53,8 +53,6 @@ module.exports = {
                 setData.image = req.file.filename
             }
             const result = await insertProduct(setData)
-            const name = "product";
-            redis.deleteCache(`${name}` + result.id)
             return response(res, 'success', result, 201)
         } catch (error) {
             console.log(error)
