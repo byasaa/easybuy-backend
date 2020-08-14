@@ -1,15 +1,15 @@
 ![](https://i.imgur.com/ISldpR4.png)
 
 
-`EasyBuy` backend app built with Node.js, Redis, Express and MySQL which has [features](https://github.com/byasaa/team-backend#features) such as login / register using Memory caching, JWT auth, pasword hashing, CORS, etc.
+`EasyBuy` backend app built with Node.js, Redis, Express and MySQL which has [features](https://github.com/byasaa/easybuy-backend#features) such as login / register using Memory caching, JWT auth, pasword hashing, CORS, etc.
 
 ## :memo: Table Of Content
-* [Prerequisites](https://github.com/byasaa/team-backend#prerequisites)
-* [Installation](https://github.com/byasaa/team-backend#installation)
-* [Features](https://github.com/byasaa/team-backend#features)
-* [Built wtih](https://github.com/byasaa/team-backend#features)
-* [Author](https://github.com/byasaa/team-backend#author)
-* [License](https://github.com/byasaa/team-backend#license)
+* [Prerequisites](https://github.com/byasaa/easybuy-backend#prerequisites)
+* [Installation](https://github.com/byasaa/easybuy-backend#installation)
+* [Features](https://github.com/byasaa/easybuy-backend#features)
+* [Built wtih](https://github.com/byasaa/easybuy-backend#features)
+* [Author](https://github.com/byasaa/easybuy-backend#author)
+* [License](https://github.com/byasaa/easybuy-backend#license)
 
 ## Prerequisites
 - Node.js installed on the local machine
@@ -17,9 +17,9 @@
 - MySQL intalled on the local machine (ex. XAMPP)
 ## Installation
 1. Clone this repository:
-    `git clone https://github.com/byasaa/team-backend`
+    `git clone https://github.com/byasaa/easybuy-backend`
 2. Install depedencies:
-    `cd team-backend & npm install`
+    `cd easybuy-backend & npm install`
 3. Start XAMPP
 4. Database configuration:
     * Open http://localhost/phpmyadmin in the browser
@@ -52,4 +52,4 @@
 - [Daniel](https://github.com/danielwetan) (full-stack)
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/byasaa/team-backend/blob/master/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/byasaa/easybuy-backend/blob/master/LICENSE) file for details
